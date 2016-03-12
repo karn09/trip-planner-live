@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class='row'>
+  <div class='col-md-8'>
+    <div id='map-canvas' style='height:500px' style='border:solid 1px black'></div>
+  </div>
+  <div class='col-md-4'>
+    {% include 'selectors.html' %}
+    {% include 'trip.html' %}
+
+  </div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkarjA8hlysMC5aK7ywsrUwYY6UwpnXG0&sensor=true"></script>
+<script>
+function initialize_gmaps() {
+    // initialize new google maps LatLng object
+    var myLatlng = new google.maps.LatLng(40.705189,-74.009209);
+    // set the map options hash
+    var mapOptions = {
+        center: myLatlng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    // get the maps div's HTML obj
+    var map_canvas_obj = document.getElementById("map-canvas");
+    console.log(map_canvas_obj);
+    // initialize a new Google Map with the options
+    var map = new google.maps.Map(map_canvas_obj, mapOptions);
+    // Add the marker to the map
+    var marker = new google.maps.Marker({
+        position: myLatlng,
+        title:"Hello World!"
+    });
+    // Add the marker to the map by calling setMap()
+    marker.setMap(map);
+}
+
+$(document).ready(function() {
+    initialize_gmaps();
+});
+</script>
+{% endblock %}
