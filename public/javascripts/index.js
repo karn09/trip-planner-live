@@ -1,3 +1,5 @@
+var markers = [];
+
 function newItem(foundObj) {
   var newItem = `<li class='clearfix'>
     <span>` + foundObj.name + `</span>
@@ -29,11 +31,29 @@ function createMarker(obj) {
   var infowindow = new google.maps.InfoWindow({
     content: createInfoContent(obj)
   });
+
+  var markerById = {
+    id : obj._id,
+    marker: marker
+  };
+  markers.push(markerById);
+
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });
+
   // marker.setMap(map);
   map.setCenter(mapLatLng);
+}
+
+function removeMarker(id) {
+  markers.find(function(marker, index) {
+    if (marker.id === id) {
+      marker.marker.setMap(null);
+      markers.splice(index,1);
+      return;
+    }
+  });
 }
 
 function createInfoContent (obj) {
@@ -56,6 +76,7 @@ $(document).ready(function() {
   $('.panel-body').on('click', '.btn-warning', function(e) {
     var currentId = $(this).attr('id')
     $(this).parent()[0].remove();
+    removeMarker(currentId);
   });
 
 
