@@ -1,3 +1,8 @@
+.clearfix:after {
+  clear: both;
+  content: " ";
+  display: block; }
+
 .title {
   border: solid 1px #ccc;
   border-radius: 5px;
