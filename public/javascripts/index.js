@@ -1,5 +1,14 @@
-var markers = [];
+var markers = [],
+    winState = {
+      1: {
+        markers: [],
+        items: []
+      }
+    }
 
+function winStateDay() {
+
+}
 function newItem(foundObj) {
   var newItem = `<li class='clearfix'>
     <span>` + foundObj.name + `</span>
@@ -63,7 +72,21 @@ function createInfoContent (obj) {
         + '<p>' + obj.place.phone + '</p>'
 }
 
+function createActivityList () {
+  var daysLength = $('.days-display').find('li').length;
+  var daysTemplate = "<li class=''><a href='/'>" + daysLength + "</a></li>"
+  var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>"
+
+  $('.createday').parent().before(daysTemplate);
+  $('.activitylist').html(activityDayTemplate);
+}
+
 $(document).ready(function() {
+
+  $('.days-display').on('click', '.createday', function(e) {
+    e.preventDefault();
+    createActivityList();
+  });
   $('.selector').on('click', '.addButton', function(e) {
     var selected = $(this).parents('.selector');
     var selectedItem = selected.find('option:selected');
