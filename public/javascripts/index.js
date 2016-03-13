@@ -4,6 +4,7 @@ function WindowState (day) {
   this.day = day;
   this.markers = [];
   this.items = [];
+  this.copy = null;
 }
 
 var currentDay = 0;
@@ -38,6 +39,11 @@ WindowState.prototype.removeItem = function (id) {
       return;
     }
   });
+};
+
+WindowState.prototype.makeCopy = function() {
+  this.copy = $('.dayAgenda').clone();
+  console.log('make copy ran: ', this.copy);
 };
 
 
@@ -98,19 +104,34 @@ function createInfoContent (obj) {
 
 function createActivityList () {
   var daysLength = $('.days-display').find('li').length;
-  var daysTemplate = "<li class=''><a href='/'>" + daysLength + "</a></li>"
+  $('.days-display').find('li').removeClass('active');
+  var daysTemplate = "<li class='active'><a href='/'>" + daysLength + "</a></li>";
   var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>"
+  currentDay++;
+  days.push(new WindowState(currentDay));
 
   $('.createday').parent().before(daysTemplate);
   $('.activitylist').html(activityDayTemplate);
 }
 
+function daySwitcher(day) {
+  currentDay = Number(day);
+  $('.dayAgenda-cont').children().remove();
+  console.log(days[currentDay].copy);
+  $('.dayAgenda-cont').append(days[currentDay].copy);
+}
 
 $(document).ready(function() {
-
+  $('#day-container').on('click','a', function(e){
+    e.preventDefault();
+    if ($(this).hasClass('createday')) return;
+    daySwitcher($(this).html());
+  });
   $('.days-display').on('click', '.createday', function(e) {
     e.preventDefault();
     createActivityList();
+    days[currentDay].makeCopy();
+    
   });
   $('.selector').on('click', '.addButton', function(e) {
     var selected = $(this).parents('.selector');
@@ -120,6 +141,7 @@ $(document).ready(function() {
     categoryAddItem(category, newItem(foundItem));
     days[currentDay].addItem(category, foundItem);
     createMarker(foundItem);
+    days[currentDay].makeCopy();
   });
 
   $('.panel-body').on('click', '.btn-warning', function(e) {
@@ -127,6 +149,7 @@ $(document).ready(function() {
     $(this).parent()[0].remove();
     days[currentDay].removeMarker(currentId);
     days[currentDay].removeItem(currentId);
+    days[currentDay].makeCopy();
   });
 
 
