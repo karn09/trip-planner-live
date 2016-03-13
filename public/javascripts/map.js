@@ -24,5 +24,4 @@ function initialize_gmaps() {
 
 $(document).ready(function() {
     initialize_gmaps();
-    init();
 });
