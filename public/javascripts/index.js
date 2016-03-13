@@ -86,7 +86,9 @@ function createMarker(obj) {
 }
 
 function updateMarkers(dayObj) {
-
+  for (var i = 0; i < dayObj.markers.length; i++) {
+    dayObj.markers[i].marker.setMap(map);
+  }
 }
 
 function clearMarkers(day) {
@@ -153,6 +155,7 @@ $(document).ready(function() {
     if ($(this).hasClass('createday')) return;
     clearMarkers(days[currentDay]);
     daySwitcher($(this).html());
+    updateMarkers(days[currentDay]);
     days[currentDay].makeCopy();
   });
 
