@@ -1,14 +1,46 @@
-var markers = [],
-    winState = {
-      1: {
-        markers: [],
-        items: []
-      }
-    }
-
-function winStateDay() {
-
+var markers = [];
+var days = [new WindowState(1)];
+function WindowState (day) {
+  this.day = day;
+  this.markers = [];
+  this.items = [];
 }
+
+var currentDay = 0;
+
+WindowState.prototype.addMarker = function (marker) {
+  this.markers.push(marker);
+};
+
+WindowState.prototype.addItem = function (type, item) {
+  this.items.push({type: type, item: item});
+};
+
+WindowState.prototype.removeMarker = function(id) {
+  var self = this;
+  this.markers.find(function(marker, index) {
+    if (marker.id === id) {
+      // console.log(self.markers);
+      marker.marker.setMap(null);
+      self.markers.splice(index,1);
+      // console.log(self.markers);
+      return;
+    }
+  });
+};
+
+WindowState.prototype.removeItem = function (id) {
+  var self = this;
+  this.items.find(function(item, index) {
+    if (item.item._id === id) {
+      self.items.splice(index,1);
+      console.log(self.items);
+      return;
+    }
+  });
+};
+
+
 function newItem(foundObj) {
   var newItem = `<li class='clearfix'>
     <span>` + foundObj.name + `</span>
@@ -45,7 +77,8 @@ function createMarker(obj) {
     id : obj._id,
     marker: marker
   };
-  markers.push(markerById);
+  days[currentDay].addMarker(markerById);
+//  markers.push(markerById);
 
   marker.addListener('click', function() {
     infowindow.open(map, marker);
@@ -55,15 +88,6 @@ function createMarker(obj) {
   map.setCenter(mapLatLng);
 }
 
-function removeMarker(id) {
-  markers.find(function(marker, index) {
-    if (marker.id === id) {
-      marker.marker.setMap(null);
-      markers.splice(index,1);
-      return;
-    }
-  });
-}
 
 function createInfoContent (obj) {
   return '<h5>' + obj.name + '</h5>'
@@ -81,6 +105,7 @@ function createActivityList () {
   $('.activitylist').html(activityDayTemplate);
 }
 
+
 $(document).ready(function() {
 
   $('.days-display').on('click', '.createday', function(e) {
@@ -93,13 +118,15 @@ $(document).ready(function() {
     var category = selected.find('label').html();
     var foundItem = findByid(selectedItem.val(), category);
     categoryAddItem(category, newItem(foundItem));
+    days[currentDay].addItem(category, foundItem);
     createMarker(foundItem);
   });
 
   $('.panel-body').on('click', '.btn-warning', function(e) {
     var currentId = $(this).attr('id')
     $(this).parent()[0].remove();
-    removeMarker(currentId);
+    days[currentDay].removeMarker(currentId);
+    days[currentDay].removeItem(currentId);
   });
 
 
