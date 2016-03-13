@@ -30,6 +30,7 @@ WindowState.prototype.addItem = function(type, item) {
 WindowState.prototype.removeMarker = function(id) {
   var self = this;
   this.markers.find(function(marker, index) {
+    debugger;
     if (marker._id === id) {
       marker.marker.setMap(null);
       self.markers.splice(index, 1);
@@ -83,7 +84,7 @@ function createMarker(obj) {
 }
 
 function updateMarkers(dayObj) {
-  //
+  
 }
 
 function clearMarkers() {
