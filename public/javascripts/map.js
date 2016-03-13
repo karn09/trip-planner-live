@@ -22,6 +22,34 @@ function initialize_gmaps() {
 
 }
 
+// GOOGLE MAPS 
+
+function createMarker(obj) {
+  var mapLatLng = new google.maps.LatLng(obj.place.location[0], obj.place.location[1]);
+  var marker = new google.maps.Marker({
+    position: mapLatLng,
+    map: map,
+    title: obj.name
+  });
+  var infowindow = new google.maps.InfoWindow({
+    content: createInfoContent(obj)
+  });
+
+  var markerById = {
+    id: obj._id,
+    marker: marker
+  };
+  days[currentDay].addMarker(markerById);
+  //  markers.push(markerById);
+
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
+
+  // marker.setMap(map);
+  map.setCenter(mapLatLng);
+}
+
 $(document).ready(function() {
     initialize_gmaps();
 });

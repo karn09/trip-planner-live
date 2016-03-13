@@ -40,14 +40,13 @@ WindowState.prototype.removeMarker = function(id) {
 
 WindowState.prototype.removeItem = function(id) {
   var self = this;
-  this.items.find(function(item, index) {
-    console.dir(item)
-    if (item.item._id === id) {
-      self.items.splice(index, 1);
-      console.log(self.items);
+  for (var i = 0; i < this.items.length; i++) {
+    if (this.items[i].item._id === id) {
+      this.items.splice(i, 1);
+      console.log(this.items);
       return;
     }
-  });
+  }
 };
 
 WindowState.prototype.makeCopy = function() {
@@ -55,27 +54,7 @@ WindowState.prototype.makeCopy = function() {
   console.log('make copy ran: ', this.copy);
 };
 
-
-function newItem(foundObj) {
-  var newItem = `<li class='clearfix'>
-    <span>` + foundObj.name + `</span>
-    <button id=` + foundObj._id + ` class="btn btn-warning btn-xs pull-right">X</button>
-  </li>`;
-  return newItem;
-}
-
-function categoryAddItem(category, item) {
-  $('.' + category).append(item);
-}
-
-function findByid(id, category) {
-  category = category.toLowerCase();
-  return window[category].find(function(val) {
-    if (val._id === id) {
-      return val;
-    }
-  });
-}
+// GOOGLE MAPS 
 
 function createMarker(obj) {
   var mapLatLng = new google.maps.LatLng(obj.place.location[0], obj.place.location[1]);
@@ -103,6 +82,35 @@ function createMarker(obj) {
   map.setCenter(mapLatLng);
 }
 
+function updateMarkers(dayObj) {
+  //
+}
+
+function clearMarkers() {
+  map.setMapOnAll(null);
+}
+// TEMPLATING AND UX ACTIONS HERE
+
+function newItem(foundObj) {
+  var newItem = `<li class='clearfix'>
+    <span>` + foundObj.name + `</span>
+    <button id=` + foundObj._id + ` class="btn btn-warning btn-xs pull-right">X</button>
+  </li>`;
+  return newItem;
+}
+
+function categoryAddItem(category, item) {
+  $('.' + category).append(item);
+}
+
+function findByid(id, category) {
+  category = category.toLowerCase();
+  return window[category].find(function(val) {
+    if (val._id === id) {
+      return val;
+    }
+  });
+}
 
 function createInfoContent(obj) {
   return '<h5>' + obj.name + '</h5>' + '<p>' + obj.place.address + '</p>' + '<p>' + obj.place.city + ', ' + obj.place.state + '</p>' + '<p>' + obj.place.phone + '</p>';
