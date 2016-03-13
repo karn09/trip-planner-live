@@ -19,8 +19,10 @@ function initialize_gmaps() {
     });
     // Add the marker to the map by calling setMap()
     marker.setMap(map);
+
 }
 
 $(document).ready(function() {
     initialize_gmaps();
+    init();
 });

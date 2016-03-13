@@ -1,6 +1,6 @@
 <div id="day-container">
-  <h4 style='text-align: center'>Day 1</h4>
-  <div class="dayAgenda-cont">
+  <h4 style='text-align: center'>Day <span class="currentDay">1</span></h4>
+  {# <div class="dayAgenda-cont"> #}
     <div class='panel panel-default dayAgenda'>
       <div class='panel-heading'>
         <ul class='nav nav-pills days-display'>
@@ -16,7 +16,9 @@
           </li>
         </ul>
       </div>
-      <div class='panel-body activitylist'>
+      
+      {# EVERYTHING BELOW HERE SHOULD BE CLONED / REPLACED #}
+      <div class='panel-body activitylist dayAgenda-cont'>
         <label>My Hotel</label>
         <ul class='Hotels list-unstyled clearfix'>
           {# {% for hotel in Array(3) %} #}
@@ -45,6 +47,8 @@
           {# {% endfor %} #}
         </ul>
       </div>
+      {# ALL ABOVE TO BE CHANGED / REPLACED #}
+
     </div>
-  </div>
+  {# </div> #}
 </div>

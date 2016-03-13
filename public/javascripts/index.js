@@ -1,40 +1,49 @@
 var markers = [];
-var days = [new WindowState(1)];
-function WindowState (day) {
+var days = [];
+var currentDay = 0;
+function init() {
+  var defState = new WindowState(1);
+  defState.makeCopy();
+  days.push(defState);
+}
+
+
+function WindowState(day) {
   this.day = day;
   this.markers = [];
   this.items = [];
   this.copy = null;
 }
 
-var currentDay = 0;
 
-WindowState.prototype.addMarker = function (marker) {
+WindowState.prototype.addMarker = function(marker) {
   this.markers.push(marker);
 };
 
-WindowState.prototype.addItem = function (type, item) {
-  this.items.push({type: type, item: item});
+WindowState.prototype.addItem = function(type, item) {
+  this.items.push({
+    type: type,
+    item: item
+  });
 };
 
 WindowState.prototype.removeMarker = function(id) {
   var self = this;
   this.markers.find(function(marker, index) {
-    if (marker.id === id) {
-      // console.log(self.markers);
+    if (marker._id === id) {
       marker.marker.setMap(null);
-      self.markers.splice(index,1);
-      // console.log(self.markers);
+      self.markers.splice(index, 1);
       return;
     }
   });
 };
 
-WindowState.prototype.removeItem = function (id) {
+WindowState.prototype.removeItem = function(id) {
   var self = this;
   this.items.find(function(item, index) {
+    console.dir(item)
     if (item.item._id === id) {
-      self.items.splice(index,1);
+      self.items.splice(index, 1);
       console.log(self.items);
       return;
     }
@@ -42,7 +51,7 @@ WindowState.prototype.removeItem = function (id) {
 };
 
 WindowState.prototype.makeCopy = function() {
-  this.copy = $('.dayAgenda').clone();
+  this.copy = $('.dayAgenda-cont').clone(true);
   console.log('make copy ran: ', this.copy);
 };
 
@@ -50,16 +59,16 @@ WindowState.prototype.makeCopy = function() {
 function newItem(foundObj) {
   var newItem = `<li class='clearfix'>
     <span>` + foundObj.name + `</span>
-    <button id=` + foundObj._id  +` class="btn btn-warning btn-xs pull-right">X</button>
+    <button id=` + foundObj._id + ` class="btn btn-warning btn-xs pull-right">X</button>
   </li>`;
   return newItem;
 }
 
-function categoryAddItem (category, item) {
+function categoryAddItem(category, item) {
   $('.' + category).append(item);
 }
 
-function findByid (id, category) {
+function findByid(id, category) {
   category = category.toLowerCase();
   return window[category].find(function(val) {
     if (val._id === id) {
@@ -71,20 +80,20 @@ function findByid (id, category) {
 function createMarker(obj) {
   var mapLatLng = new google.maps.LatLng(obj.place.location[0], obj.place.location[1]);
   var marker = new google.maps.Marker({
-      position: mapLatLng,
-      map: map,
-      title: obj.name
+    position: mapLatLng,
+    map: map,
+    title: obj.name
   });
   var infowindow = new google.maps.InfoWindow({
     content: createInfoContent(obj)
   });
 
   var markerById = {
-    id : obj._id,
+    id: obj._id,
     marker: marker
   };
   days[currentDay].addMarker(markerById);
-//  markers.push(markerById);
+  //  markers.push(markerById);
 
   marker.addListener('click', function() {
     infowindow.open(map, marker);
@@ -95,19 +104,17 @@ function createMarker(obj) {
 }
 
 
-function createInfoContent (obj) {
-  return '<h5>' + obj.name + '</h5>'
-        + '<p>' + obj.place.address +  '</p>'
-        + '<p>' + obj.place.city + ', '+ obj.place.state +'</p>'
-        + '<p>' + obj.place.phone + '</p>'
+function createInfoContent(obj) {
+  return '<h5>' + obj.name + '</h5>' + '<p>' + obj.place.address + '</p>' + '<p>' + obj.place.city + ', ' + obj.place.state + '</p>' + '<p>' + obj.place.phone + '</p>';
 }
 
-function createActivityList () {
+function createActivityList() {
   var daysLength = $('.days-display').find('li').length;
   $('.days-display').find('li').removeClass('active');
   var daysTemplate = "<li class='active'><a href='/'>" + daysLength + "</a></li>";
-  var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>"
+  var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>";
   currentDay++;
+  console.log(currentDay);
   days.push(new WindowState(currentDay));
 
   $('.createday').parent().before(daysTemplate);
@@ -115,24 +122,29 @@ function createActivityList () {
 }
 
 function daySwitcher(day) {
-  currentDay = Number(day);
-  $('.dayAgenda-cont').children().remove();
-  console.log(days[currentDay].copy);
-  $('.dayAgenda-cont').append(days[currentDay].copy);
+  currentDay = Number(day) - 1; // off by one error.
+  // $('.dayAgenda-cont').children().remove();
+  // console.log(days[currentDay]);
+  $('.dayAgenda-cont').replaceWith(days[currentDay].copy);
 }
 
+
+// EVENT HANDLERS
 $(document).ready(function() {
-  $('#day-container').on('click','a', function(e){
+
+  $('#day-container').on('click', 'a', function(e) {
     e.preventDefault();
     if ($(this).hasClass('createday')) return;
     daySwitcher($(this).html());
+    days[currentDay].makeCopy();
   });
+
   $('.days-display').on('click', '.createday', function(e) {
     e.preventDefault();
     createActivityList();
     days[currentDay].makeCopy();
-    
   });
+
   $('.selector').on('click', '.addButton', function(e) {
     var selected = $(this).parents('.selector');
     var selectedItem = selected.find('option:selected');
@@ -145,12 +157,11 @@ $(document).ready(function() {
   });
 
   $('.panel-body').on('click', '.btn-warning', function(e) {
-    var currentId = $(this).attr('id')
+    var currentId = $(this).attr('id');
     $(this).parent()[0].remove();
     days[currentDay].removeMarker(currentId);
-    days[currentDay].removeItem(currentId);
+    days[currentDay].removeItem(currentId).bind(this);
     days[currentDay].makeCopy();
   });
-
 
 });
