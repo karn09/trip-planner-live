@@ -29,14 +29,15 @@ WindowState.prototype.addItem = function(type, item) {
 
 WindowState.prototype.removeMarker = function(id) {
   var self = this;
-  this.markers.find(function(marker, index) {
-    debugger;
-    if (marker._id === id) {
-      marker.marker.setMap(null);
-      self.markers.splice(index, 1);
+
+  for (var i = 0; i < this.markers.length; i++) {
+    if (this.markers[i].id === id) {
+      this.markers[i].marker.setMap(null);
+      this.markers.splice(i, 1);
+      console.log(this.markers);
       return;
     }
-  });
+  }
 };
 
 WindowState.prototype.removeItem = function(id) {
@@ -55,7 +56,7 @@ WindowState.prototype.makeCopy = function() {
   console.log('make copy ran: ', this.copy);
 };
 
-// GOOGLE MAPS 
+// GOOGLE MAPS
 
 function createMarker(obj) {
   var mapLatLng = new google.maps.LatLng(obj.place.location[0], obj.place.location[1]);
@@ -84,7 +85,7 @@ function createMarker(obj) {
 }
 
 function updateMarkers(dayObj) {
-  
+
 }
 
 function clearMarkers() {
@@ -122,7 +123,7 @@ function createActivityList() {
   $('.days-display').find('li').removeClass('active');
   var daysTemplate = "<li class='active'><a href='/'>" + daysLength + "</a></li>";
   var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>";
-  
+
   currentDay = days.length;
   days.push(new WindowState(currentDay+1));
   console.log(currentDay);
