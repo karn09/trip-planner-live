@@ -1,6 +1,7 @@
 var markers = [];
 var days = [];
 var currentDay = 0;
+
 function init() {
   var defState = new WindowState(1);
   defState.makeCopy();
@@ -88,8 +89,13 @@ function updateMarkers(dayObj) {
 
 }
 
-function clearMarkers() {
-  map.setMapOnAll(null);
+function clearMarkers(day) {
+
+  for (var i = 0; i < day.markers.length; i++) {
+      day.markers[i].marker.setMap(null);
+  }
+  console.log(day.markers);
+  // map.setMapOnAll(null);
 }
 // TEMPLATING AND UX ACTIONS HERE
 
@@ -125,7 +131,7 @@ function createActivityList() {
   var activityDayTemplate = "<label>My Hotel</label><ul class='Hotels list-unstyled clearfix'></ul><label>My Restaurants</label><ul class='Restaurants list-unstyled clearfix'></ul><label>My Activities</label><ul class='Activities list-unstyled clearfix'></ul></div>";
 
   currentDay = days.length;
-  days.push(new WindowState(currentDay+1));
+  days.push(new WindowState(currentDay + 1));
   console.log(currentDay);
 
   $('.createday').parent().before(daysTemplate);
@@ -135,7 +141,7 @@ function createActivityList() {
 function daySwitcher(day) {
   currentDay = Number(day) - 1; // off by one error.
   // $('.dayAgenda-cont').children().remove();
-    $('.dayAgenda-cont').replaceWith(days[currentDay].copy);
+  $('.dayAgenda-cont').replaceWith(days[currentDay].copy);
 }
 
 
@@ -145,12 +151,14 @@ $(document).ready(function() {
   $('#day-container').on('click', 'a', function(e) {
     e.preventDefault();
     if ($(this).hasClass('createday')) return;
+    clearMarkers(days[currentDay]);
     daySwitcher($(this).html());
     days[currentDay].makeCopy();
   });
 
   $('.days-display').on('click', '.createday', function(e) {
     e.preventDefault();
+    clearMarkers(days[currentDay]);
     createActivityList();
     days[currentDay].makeCopy();
   });
